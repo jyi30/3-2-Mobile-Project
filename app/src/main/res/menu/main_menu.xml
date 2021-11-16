@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="점주화면으로 이동"
+        android:id="@+id/one"/>
+
+    <item
+        android:title="고객화면으로 이동"
+        android:id="@+id/two"/>
+
+    <item
+        android:title="로그아웃"
+        android:id="@+id/btn_logout"/>
+
+</menu>

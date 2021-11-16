@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="513dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            tools:layout_editor_absoluteX="106dp"
+            tools:layout_editor_absoluteY="259dp" />
+
+        <TextView
+            android:id="@+id/nickName"
+            android:gravity="center"
+            android:textSize="28sp"
+            android:layout_width="150dp"
+            android:layout_height="56dp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="211dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="185dp"
+            android:layout_height="71dp"
+            android:text="로그아웃"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="623dp"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="185dp"
+            android:layout_height="71dp"
+            android:text="확인"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="624dp"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/login"
+        tools:layout_editor_absoluteX="54dp"
+        tools:layout_editor_absoluteY="533dp"
+        />
+
+
+
+</LinearLayout>
