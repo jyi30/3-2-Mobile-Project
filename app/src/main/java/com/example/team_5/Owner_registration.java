@@ -16,6 +16,7 @@ import android.widget.TextView;
 public class Owner_registration extends AppCompatActivity {
     private ImageView rightIcon,rightIcon2;
     private Button btn_registration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

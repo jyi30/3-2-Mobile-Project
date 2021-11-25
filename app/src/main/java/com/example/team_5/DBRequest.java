@@ -14,8 +14,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 
 public class DBRequest {
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance(); //파이어베이스 접근 위한 인스턴스 생성
+
+
+    //가게 데이터
     public static void getStoreDB(String storeId, MutableLiveData<HashMap<String,Object>> data){
         db.collection("Store").document(storeId)
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -26,6 +29,7 @@ public class DBRequest {
         });
     }
 
+    //user_id 데이터
     public static void getStoreDB2Uid(Long uid, MutableLiveData<HashMap<String,Object>> data){
         db.collection("Store").whereEqualTo("user_id",uid)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

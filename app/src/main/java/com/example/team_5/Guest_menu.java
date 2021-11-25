@@ -32,7 +32,7 @@ public class Guest_menu extends AppCompatActivity {
         TextView title = findViewById(R.id.toolbar_title);
         title.setText("메뉴판");   //툴바 제목
 
-        leftIcon.setOnClickListener(new View.OnClickListener() {                  //뒤로가기 버튼튼
+        leftIcon.setOnClickListener(new View.OnClickListener() {                  //뒤로가기 버튼
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Guest_menu.this, GuestActivity.class);

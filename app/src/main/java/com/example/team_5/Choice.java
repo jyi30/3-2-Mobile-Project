@@ -16,6 +16,7 @@ import android.widget.TextView;
 public class Choice extends AppCompatActivity {
     private Button btn_owner, btn_client;
     private ImageView rightIcon,rightIcon2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

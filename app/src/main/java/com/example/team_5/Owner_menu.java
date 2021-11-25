@@ -40,7 +40,7 @@ private ImageView rightIcon,rightIcon2;
         btn_add = findViewById(R.id.btn_menu);                            //추가버튼
 
         registerForContextMenu(mListView);
-        leftIcon.setOnClickListener(new View.OnClickListener()    {                  //뒤로가기 버튼튼
+        leftIcon.setOnClickListener(new View.OnClickListener()    {                  //뒤로가기 버튼
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Owner_menu.this, Owner_manager.class);

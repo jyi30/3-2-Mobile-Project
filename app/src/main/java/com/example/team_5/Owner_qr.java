@@ -21,7 +21,7 @@ private Button qrcode;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner_qr);
 
-         qrcode = findViewById(R.id.qrcode);            //qr코드 생성버튼
+        qrcode = findViewById(R.id.qrcode);            //qr코드 생성버튼
         rightIcon = findViewById(R.id.right_icon);
         rightIcon2 = findViewById(R.id.right_icon2);
         registerForContextMenu(rightIcon);

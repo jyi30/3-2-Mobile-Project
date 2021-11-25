@@ -39,8 +39,8 @@ import com.google.mlkit.vision.common.InputImage;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-
-public class GuestFragment extends Fragment {
+//QR스캔 위해 카메라 불러오는 화면
+public class GuestScanFragment extends Fragment {
 
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private FragmentGuestBinding fragmentGuestBinding;
@@ -56,11 +56,11 @@ public class GuestFragment extends Fragment {
         this.guestFragmentListener = guestFragmentListener;
     }
 
-    public GuestFragment() {
+    public GuestScanFragment() {
     }
 
-    public static GuestFragment newInstance() {
-        GuestFragment fragment = new GuestFragment();
+    public static GuestScanFragment newInstance() {
+        GuestScanFragment fragment = new GuestScanFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;

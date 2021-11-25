@@ -2,7 +2,6 @@ package com.example.team_5;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -14,24 +13,19 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.team_5.databinding.ActivityGuestBinding;
-import com.google.android.material.navigation.NavigationBarView;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.mlkit.vision.barcode.BarcodeScanner;
-
 public class GuestActivity extends AppCompatActivity implements
-        GuestFragment.GuestFragmentListener {
+        GuestScanFragment.GuestFragmentListener {
 
-    public final int REQUEST_CODE_PERMISSIONS = 100;
+    public final int REQUEST_CODE_PERMISSIONS = 100; //카메라 권한설정
+    private StoreViewModel storeViewModel;
 
     private ImageView rightIcon, rightIcon2;
-
-    private ActivityGuestBinding activityGuestBinding;
-    private StoreViewModel storeViewModel;
+    private Button qrcodeScan;
 
 
     @Override
@@ -41,15 +35,24 @@ public class GuestActivity extends AppCompatActivity implements
 
         rightIcon = findViewById(R.id.right_icon);
         rightIcon2 = findViewById(R.id.right_icon2);
+        qrcodeScan = findViewById(R.id.btn_qr_scan);
 
         ImageView leftIcon = findViewById(R.id.left_icon);    //뒤로가기 버튼
         ImageView rightIcon = findViewById(R.id.right_icon);  //메뉴버튼
         ImageView rightIcon2 = findViewById(R.id.right_icon2);  //메뉴버튼
+        TextView title = findViewById(R.id.toolbar_title);
+        title.setText("QR코드 스캔");   //툴바 제목
+
         registerForContextMenu(rightIcon);
         registerForContextMenu(rightIcon2);
 
-        TextView title = findViewById(R.id.toolbar_title);
-        title.setText("QR코드 스캔");   //툴바 제목
+        storeViewModel = new ViewModelProvider(this).get(StoreViewModel.class);
+
+        if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+            startMain();
+        }else {
+            requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSIONS);
+        }
 
         leftIcon.setOnClickListener(new View.OnClickListener()    {                  //선택 화면으로 이동
             @Override
@@ -58,18 +61,8 @@ public class GuestActivity extends AppCompatActivity implements
                 startActivity(intent);
             }
         });
-
-        activityGuestBinding = ActivityGuestBinding.inflate(getLayoutInflater());
-        View view = activityGuestBinding.getRoot();
-        setContentView(view);
-        storeViewModel = new ViewModelProvider(this).get(StoreViewModel.class);
-
-        if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
-            startMain();
-        }else {
-            requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSIONS);
-        }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -86,34 +79,25 @@ public class GuestActivity extends AppCompatActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    /*@Override
-    public void itemClick(String storeId) {
-        storeViewModel.setStore(storeId);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, MenuFragment.newInstance())
-                .addToBackStack("menu")
-                .commit();
-    }*/
-
     @Override
     public void onBarcode(String storeId) {
         storeViewModel.setStore(storeId);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, MenuFragment.newInstance())
+        fragmentManager.beginTransaction().replace(R.id.container, GuestMenuFragment.newInstance())
                 .addToBackStack("menu")
                 .commit();
     }
 
     private void startMain(){
-        activityGuestBinding.btnQrScan.setOnClickListener(new View.OnClickListener() {
+        qrcodeScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GuestFragment guestFragment = GuestFragment.newInstance();
-                guestFragment.setGuestFragmentListener(GuestActivity.this);
+                GuestScanFragment guestScanFragment = GuestScanFragment.newInstance();
+                guestScanFragment.setGuestFragmentListener(GuestActivity.this);
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, guestFragment)
+                fragmentManager.beginTransaction().replace(R.id.container, guestScanFragment)
                         .commit();
-                activityGuestBinding.btnQrScan.setVisibility(View.GONE);
+                qrcodeScan.setVisibility(View.GONE);
             }
         });
     }
@@ -125,12 +109,13 @@ public class GuestActivity extends AppCompatActivity implements
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater mi = getMenuInflater();
         if(v == rightIcon){
-            mi.inflate(R.menu.main_menu, menu);
+            mi.inflate(R.menu.main_menu2, menu);
         }
         if (v == rightIcon2){
             mi.inflate(R.menu.menu_call, menu);
         }
     }//end of ContextMenu()
+
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {

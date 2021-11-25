@@ -19,6 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TEAM_5">
+        <activity android:name=".OwnerMenuAdd"></activity>
         <activity android:name=".Owner_registration" />
         <activity android:name=".Guest_menu" />
         <activity android:name=".GuestActivity" />

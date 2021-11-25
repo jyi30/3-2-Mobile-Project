@@ -13,19 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MenuListAdapter extends RecyclerView.Adapter<MenuListAdapter.MenuItemViewHolder> {
+public class GuestMenuListAdapter extends RecyclerView.Adapter<GuestMenuListAdapter.MenuItemViewHolder> {
     private final String TAG = "menuList";
     private ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
     private StorageReference storageReference;
 
-
-    public MenuListAdapter() {
+    public GuestMenuListAdapter() {
     }
 
     @NonNull

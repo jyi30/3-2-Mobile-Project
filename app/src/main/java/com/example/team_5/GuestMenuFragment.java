@@ -18,23 +18,21 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MenuFragment extends Fragment {
+public class GuestMenuFragment extends Fragment {
 
     private StoreViewModel storeViewModel;
-    private FragmentMenuBinding fragmentMenuBinding;
-    private MenuListAdapter menuListAdapter;
+    private FragmentMenuBinding fragmentMenuBinding; //id 불러오기 위한 바인딩(findViewById 없이 id 사용가능)
+    private GuestMenuListAdapter guestMenuListAdapter;
     private FirebaseStorage storage = FirebaseStorage.getInstance("gs://qrmenu-2139c.appspot.com");
     private StorageReference storageRef;
 
-
-    public MenuFragment() {
+    public GuestMenuFragment() {
         // Required empty public constructor
     }
 
-
     // TODO: Rename and change types and number of parameters
-    public static MenuFragment newInstance() {
-        MenuFragment fragment = new MenuFragment();
+    public static GuestMenuFragment newInstance() {
+        GuestMenuFragment fragment = new GuestMenuFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -46,17 +44,14 @@ public class MenuFragment extends Fragment {
         if (getArguments() != null) {
         }
         storeViewModel = new ViewModelProvider(requireActivity()).get(StoreViewModel.class);
-        menuListAdapter = new MenuListAdapter();
+        guestMenuListAdapter = new GuestMenuListAdapter();
         storageRef = storage.getReference();
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        fragmentMenuBinding = FragmentMenuBinding.inflate(inflater,container,false);
+        fragmentMenuBinding = FragmentMenuBinding.inflate(inflater,container,false); //바인딩
         return fragmentMenuBinding.getRoot();
     }
 
@@ -64,18 +59,18 @@ public class MenuFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        fragmentMenuBinding.menuList.setAdapter(menuListAdapter);
+        fragmentMenuBinding.menuList.setAdapter(guestMenuListAdapter);
         fragmentMenuBinding.menuList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         storeViewModel.store.observe(getViewLifecycleOwner(), new Observer<HashMap<String, Object>>() {
             @Override
             public void onChanged(HashMap<String, Object> stringObjectHashMap) {
                 ArrayList<HashMap<String,Object>> menus =(ArrayList<HashMap<String,Object>>) stringObjectHashMap.get("menus");
-                menuListAdapter.setMenu(menus);
+                guestMenuListAdapter.setMenu(menus);
                 String id = (String) stringObjectHashMap.get("id");
                 String path = "store/" + id;
                 StorageReference storeRef = storageRef.child(path);
-                menuListAdapter.setStorageReference(storeRef);
+                guestMenuListAdapter.setStorageReference(storeRef);
 
             }
         });
