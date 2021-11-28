@@ -5,20 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Guest">
+    tools:context=".GuestActivity">
     <include layout="@layout/toolbar"></include>
 
-    <TextView
-        android:id="@+id/et_id"
+
+
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="195dp"
-        android:ems="16"
-        android:fontFamily="@font/nanumsquare_0"
-        android:gravity="center"
-        android:hint="Logo"
-        android:maxLength="20"
-        android:textColorHint="@color/black"
-        android:textSize="40dp" />
+        android:layout_height="match_parent"
+        >
+        <Button
+            android:id="@+id/btn_qr_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/button1"
+            android:ems="15"
+            android:fontFamily="@font/nanumsquare_acl"
+            android:text="QR코드 스캔"
+            android:textColor="@color/black"/>
+    </FrameLayout>
+
 
 
 </LinearLayout>

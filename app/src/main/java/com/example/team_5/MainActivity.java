@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         btn_next.setOnClickListener(new View.OnClickListener() {           //선택화면으로 이동
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(com.example.team_5.MainActivity.this, Choice.class);
+                Intent intent = new Intent(MainActivity.this, Choice.class);
                 startActivity(intent);
             }
         });
@@ -68,15 +68,13 @@ public class MainActivity extends AppCompatActivity {
        btn_logIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(com.example.team_5.MainActivity.this)){
-                    UserApiClient.getInstance().loginWithKakaoTalk(com.example.team_5.MainActivity.this,callback);
+                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)){
+                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this,callback);
                 }else {
-                    UserApiClient.getInstance().loginWithKakaoAccount(com.example.team_5.MainActivity.this, callback);
+                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
                 }
             }
         });
-
-
 
         logoutButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -125,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     //닉네임표시
                     nickName.setText(user.getKakaoAccount().getProfile().getNickname());
                     //프로필사진을 동그랗게 짤라서 보여주기
-                    Glide.with(proflieImage).load(user.getKakaoAccount().getProfile().getThumbnailImageUrl()).circleCrop().into(proflieImage);
-
+                    Glide.with(getApplicationContext()).load(user.getKakaoAccount().getProfile().getThumbnailImageUrl()).circleCrop().into(proflieImage);
 
                     //로그인되어있다면 로그아웃버튼만 활성화
                     btn_logIn.setVisibility(View.GONE);
@@ -146,3 +143,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+

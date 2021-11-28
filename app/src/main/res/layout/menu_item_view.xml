@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/menu_image"
+            android:layout_width="100dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:layout_width="202dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/menu_name"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:fontFamily="@font/nanumsquare_0"
+                android:gravity="center"
+                android:text="name.."
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/menu_information"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/nanumsquare_acl"
+                android:gravity="center"
+                android:text="contents.."
+                android:textSize="13dp" />
+
+            <TextView
+                android:id="@+id/menu_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/ic_baseline_monetization_on_24"
+                android:fontFamily="@font/nanumsquare_acl"
+                android:gravity="center"
+                android:text="contents.."
+                android:textSize="15dp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/menu_min"
+            android:layout_width="36sp"
+            android:layout_height="34dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:maxWidth="48dp"
+            android:text="-"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/menu_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="0"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/menu_max"
+            android:layout_width="36sp"
+            android:layout_height="34dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:maxWidth="48dp"
+            android:text="+"
+            android:textAlignment="center"
+            android:textSize="15dp" />
+
+    </LinearLayout>
+
+</FrameLayout>
+

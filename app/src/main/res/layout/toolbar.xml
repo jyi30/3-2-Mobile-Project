@@ -26,15 +26,6 @@
             android:textSize="25sp" />
 
         <ImageView
-            android:id="@+id/right_icon2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toStartOf="@+id/right_icon"
-            android:layout_toEndOf="@+id/toolbar_title"
-            android:src="@drawable/ic_baseline_notifications_24" />
-
-        <ImageView
             android:id="@+id/right_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
