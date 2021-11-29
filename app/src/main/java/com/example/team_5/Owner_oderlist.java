@@ -1,8 +1,5 @@
 package com.example.team_5;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -12,17 +9,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 public class Owner_oderlist extends AppCompatActivity {
-    private ImageView rightIcon,rightIcon2;
+    private ImageView rightIcon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner_oderlist);
 
         rightIcon = findViewById(R.id.right_icon);
-        rightIcon2 = findViewById(R.id.right_icon2);
         registerForContextMenu(rightIcon);
-        registerForContextMenu(rightIcon2);
 
         TextView title = findViewById(R.id.toolbar_title);
         title.setText("주문목록");   //툴바 제목
@@ -47,9 +45,6 @@ public class Owner_oderlist extends AppCompatActivity {
         if(v == rightIcon){
             mi.inflate(R.menu.main_menu1, menu);
         }
-        if (v == rightIcon2){
-            mi.inflate(R.menu.menu_call, menu);
-        }
     }//end of ContextMenu()
 
     @Override
@@ -60,12 +55,6 @@ public class Owner_oderlist extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.btn_logout:   //로그아웃
-                return true;
-            case R.id.call:     //알림
-                return true;
-            case R.id.call1:    //알림
-                return true;
-            case R.id.call2:    //알림
                 return true;
         }
         return false;

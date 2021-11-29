@@ -3,6 +3,7 @@ package com.example.team_5;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -14,14 +15,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.team_5.databinding.ActivityOwnerManagerBinding;
 
-public class Owner_manager extends AppCompatActivity {
+import java.util.HashMap;
+
+public class Owner_manager extends AppCompatActivity
+        implements OwnerRegistrationFragment.ORFragListener {
+
     private StoreViewModel storeViewModel;
     private Long uid;
     private ActivityOwnerManagerBinding activityOwnerManagerBinding;
-    private ImageView rightIcon, rightIcon2;
+    private ImageView rightIcon;
     private Button btn_store_registration, btn_menu, btn_qr, btn_order;
 
     @Override
@@ -29,21 +35,17 @@ public class Owner_manager extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         activityOwnerManagerBinding = ActivityOwnerManagerBinding.inflate(getLayoutInflater());
         View view = activityOwnerManagerBinding.getRoot();
-        setContentView(R.layout.activity_owner_manager);
+        setContentView(view);
 
         uid = getIntent().getLongExtra("uid", 0);
 
         storeViewModel = new ViewModelProvider(this).get(StoreViewModel.class);
         storeViewModel.setStoreUId(uid);
 
-
         rightIcon = findViewById(R.id.right_icon);
-        rightIcon2 = findViewById(R.id.right_icon2);
         registerForContextMenu(rightIcon);
-        registerForContextMenu(rightIcon2);
         ImageView leftIcon = findViewById(R.id.left_icon);    //상단 뒤로가기 버튼
         ImageView rightIcon = findViewById(R.id.right_icon);  //상단 메뉴버튼
-        ImageView rightIcon2 = findViewById(R.id.right_icon2); //상단 알림
 
         btn_store_registration= findViewById(R.id.btn_store_registration); //가게등록 버튼
         btn_menu = findViewById(R.id.btn_menu);                            //메뉴관리 버튼
@@ -52,43 +54,81 @@ public class Owner_manager extends AppCompatActivity {
         TextView title = findViewById(R.id.toolbar_title);
         title.setText("관리자 화면");   //툴바 제목
 
-
         //가게 등록 화면으로 이동
-        btn_store_registration.setOnClickListener(new View.OnClickListener() {
+        storeViewModel.store.observe(this, new Observer<HashMap<String, Object>>() {
             @Override
-            public void onClick(View v) {
-                OwnerRegistrationFragment ownerRegistrationFragment = OwnerRegistrationFragment.newInstance(uid);
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, ownerRegistrationFragment).commit();
-                activityOwnerManagerBinding.btnQr.setVisibility(View.GONE);
-                activityOwnerManagerBinding.btnOrder.setVisibility(View.GONE);
-                activityOwnerManagerBinding.btnMenu.setVisibility(View.GONE);
-                activityOwnerManagerBinding.btnStoreRegistration.setVisibility(View.GONE);
+            public void onChanged(HashMap<String, Object> stringObjectHashMap) {
+                if (stringObjectHashMap != null) {      //store가 있을 경우
+                    activityOwnerManagerBinding.ownerProgress.setVisibility(View.GONE);
+                    activityOwnerManagerBinding.btnContainer.setVisibility(View.VISIBLE);
+                    String sid = (String) stringObjectHashMap.get("id");
+                    String path = "/store/" + sid + "/qr.jpg";
 
-            }
-        });
+                    btn_menu.setOnClickListener(new View.OnClickListener() {           //메뉴관리 화면으로 이동
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Owner_manager.this, Owner_menu.class);
+                            startActivity(intent);
+                        }
+                    });
 
-        btn_menu.setOnClickListener(new View.OnClickListener() {           //메뉴관리 화면으로 이동
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Owner_manager.this, Owner_menu.class);
-                startActivity(intent);
-            }
-        });
+                    btn_order.setOnClickListener(new View.OnClickListener() {           //주문목록 화면으로 이동
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Owner_manager.this, Owner_oderlist.class);
+                            startActivity(intent);
+                        }
+                    });
 
-        btn_order.setOnClickListener(new View.OnClickListener() {           //주문목록 화면으로 이동
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Owner_manager.this, Owner_oderlist.class);
-                startActivity(intent);
-            }
-        });
+                    btn_qr.setOnClickListener(new View.OnClickListener() {           //QR 코드 확인 화면으로 이동
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Owner_manager.this, Owner_qr.class);
+                            intent.putExtra("path", path);
+                            startActivity(intent);
+                        }
+                    });
+                    btn_store_registration.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getApplicationContext(), "가게가 이미 등록 되어있습니다.",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else { //store가 없을 경우
+                    btn_store_registration.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            OwnerRegistrationFragment ownerRegistrationFragment = OwnerRegistrationFragment.newInstance(uid);
+                            ownerRegistrationFragment.setOrFragListener(Owner_manager.this);
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            activityOwnerManagerBinding.btnContainer.setVisibility(View.GONE);
+                            activityOwnerManagerBinding.frgContainer.setVisibility(View.VISIBLE);
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.frg_container, ownerRegistrationFragment, "ownerRegistrationFragment")
+                                    .commit();
+                        }
+                    });
+                    btn_menu.setOnClickListener(new View.OnClickListener() {           //메뉴관리 화면으로 이동
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.",Toast.LENGTH_LONG).show();
+                        }
+                    });
 
-        btn_qr.setOnClickListener(new View.OnClickListener() {           //QR 코드 확인 화면으로 이동
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Owner_manager.this, Owner_registration.class);
-                startActivity(intent);
+                    btn_order.setOnClickListener(new View.OnClickListener() {           //주문목록 화면으로 이동
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.",Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                    btn_qr.setOnClickListener(new View.OnClickListener() {           //QR 코드 확인 화면으로 이동
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         });
 
@@ -99,8 +139,8 @@ public class Owner_manager extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,              //상단 메뉴
                                     ContextMenu.ContextMenuInfo menuInfo) {
@@ -109,9 +149,6 @@ public class Owner_manager extends AppCompatActivity {
         MenuInflater mi = getMenuInflater();
         if(v == rightIcon){
             mi.inflate(R.menu.main_menu1, menu);
-        }
-        if (v == rightIcon2){
-            mi.inflate(R.menu.menu_call, menu);
         }
     }//end of ContextMenu()
 
@@ -124,13 +161,15 @@ public class Owner_manager extends AppCompatActivity {
                 return true;
             case R.id.btn_logout:   //로그아웃
                 return true;
-            case R.id.call:     //알림
-                return true;
-            case R.id.call1:    //알림
-                return true;
-            case R.id.call2:    //알림
-                return true;
         }
         return false;
+    }
+
+    @Override
+    public void onRegister() {
+        activityOwnerManagerBinding.btnContainer.setVisibility(View.VISIBLE);
+        activityOwnerManagerBinding.frgContainer.setVisibility(View.GONE);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("ownerRegistrationFragment"));
     }
 }

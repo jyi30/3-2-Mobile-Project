@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Choice">
-<include layout="@layout/toolbar"></include>
+    <include layout="@layout/toolbar"></include>
 
     <TextView
         android:id="@+id/et_id"

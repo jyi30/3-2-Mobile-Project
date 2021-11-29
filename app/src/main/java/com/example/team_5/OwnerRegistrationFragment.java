@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +43,16 @@ public class OwnerRegistrationFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseStorage storage = FirebaseStorage.getInstance("gs://qrmenu-2139c.appspot.com/");
     private StorageReference storageRef;
+    private StoreViewModel storeViewModel;
+    private ORFragListener orFragListener;
 
+    interface ORFragListener{
+        void onRegister();
+    }
+
+    public void setOrFragListener (ORFragListener orFragListener) {
+        this.orFragListener = orFragListener;
+    }
 
     public OwnerRegistrationFragment() {
         // Required empty public constructor
@@ -64,7 +74,8 @@ public class OwnerRegistrationFragment extends Fragment {
         }
         db = FirebaseFirestore.getInstance();
         storageRef = storage.getReference();
-
+        storeViewModel = new ViewModelProvider(requireActivity())
+                .get(StoreViewModel.class);
     }
 
     @Override
@@ -114,7 +125,6 @@ public class OwnerRegistrationFragment extends Fragment {
         });
     }
 
-
     private void makeQR(String id){
         RequestQueue queue = Volley.newRequestQueue(getContext());
         String url ="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl="+id;
@@ -125,7 +135,7 @@ public class OwnerRegistrationFragment extends Fragment {
                     @Override
                     public void onResponse(Bitmap response) {
                         String path = "store/" + id + "/qr.jpg";
-                        saveQRImage(path, response);
+                        saveQRImage(path, response, id);
                     }
                 }, 0, 0, ImageView.ScaleType.CENTER_CROP, Bitmap.Config.ARGB_8888,
                 new Response.ErrorListener(){
@@ -139,7 +149,7 @@ public class OwnerRegistrationFragment extends Fragment {
         queue.add(imageRequest);
     }
 
-    private void saveQRImage(String path, Bitmap bitmap){
+    private void saveQRImage(String path, Bitmap bitmap, String sid){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
         byte[] data = baos.toByteArray();
@@ -157,6 +167,8 @@ public class OwnerRegistrationFragment extends Fragment {
                 fragmentOwnerRegistrationBinding.addStoreView.setVisibility(View.VISIBLE);
                 fragmentOwnerRegistrationBinding.addStoreLoading.setVisibility(View.GONE);
                 Toast.makeText(getContext(),"QR성공",Toast.LENGTH_SHORT).show();
+                storeViewModel.setStoreId(sid);
+                orFragListener.onRegister();
             }
         });
 

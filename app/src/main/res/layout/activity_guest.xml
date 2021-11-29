@@ -8,23 +8,13 @@
     tools:context=".GuestActivity">
     <include layout="@layout/toolbar"></include>
 
-    <TextView
-        android:id="@+id/et_id"
-        android:layout_width="match_parent"
-        android:layout_height="195dp"
-        android:ems="16"
-        android:fontFamily="@font/nanumsquare_0"
-        android:gravity="center"
-        android:hint="Logo"
-        android:maxLength="20"
-        android:textColorHint="@color/black"
-        android:textSize="40dp" />
 
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
+
         <Button
             android:id="@+id/btn_qr_scan"
             android:layout_width="wrap_content"
@@ -37,7 +27,6 @@
             android:text="QR코드 스캔"
             android:textColor="@color/black"/>
     </FrameLayout>
-
 
 
 </LinearLayout>

@@ -1,8 +1,5 @@
 package com.example.team_5;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -13,19 +10,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 public class Choice extends AppCompatActivity {
     private Button btn_owner, btn_client;
     private ImageView rightIcon,rightIcon2;
+    private Long uid; //user ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choice);
 
+        uid = getIntent().getLongExtra("uid",0); //user id
+
         rightIcon = findViewById(R.id.right_icon);
-        rightIcon2 = findViewById(R.id.right_icon2);
         registerForContextMenu(rightIcon);
-        registerForContextMenu(rightIcon2);
 
         btn_owner = findViewById(R.id.btn_owner);     //점주버튼
         btn_client = findViewById(R.id.btn_client);    //고객버튼
@@ -36,6 +37,7 @@ public class Choice extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Choice.this, Owner_manager.class);
+                intent.putExtra("uid",uid); //user id 받아오기
                 startActivity(intent);
             }
         });
@@ -48,7 +50,7 @@ public class Choice extends AppCompatActivity {
         });
 
         leftIcon.setOnClickListener(new View.OnClickListener()    {                  //뒤로가기 버튼튼
-           @Override
+            @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Choice.this, MainActivity.class);
                 startActivity(intent);
@@ -67,21 +69,12 @@ public class Choice extends AppCompatActivity {
         if(v == rightIcon){
             mi.inflate(R.menu.main_menu2, menu);
         }
-        if (v == rightIcon2){
-            mi.inflate(R.menu.menu_call, menu);
-        }
     }//end of ContextMenu()
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.btn_logout:   //로그아웃
-                return true;
-            case R.id.call:     //알림
-                return true;
-            case R.id.call1:    //알림
-                return true;
-            case R.id.call2:    //알림
                 return true;
         }
         return false;

@@ -1,10 +1,5 @@
 package com.example.team_5;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
+
 public class GuestActivity extends AppCompatActivity implements
         GuestScanFragment.GuestFragmentListener {
 
@@ -27,24 +27,20 @@ public class GuestActivity extends AppCompatActivity implements
     private ImageView rightIcon, rightIcon2;
     private Button qrcodeScan;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest);
 
         rightIcon = findViewById(R.id.right_icon);
-        rightIcon2 = findViewById(R.id.right_icon2);
         qrcodeScan = findViewById(R.id.btn_qr_scan);
 
         ImageView leftIcon = findViewById(R.id.left_icon);    //뒤로가기 버튼
         ImageView rightIcon = findViewById(R.id.right_icon);  //메뉴버튼
-        ImageView rightIcon2 = findViewById(R.id.right_icon2);  //메뉴버튼
         TextView title = findViewById(R.id.toolbar_title);
         title.setText("QR코드 스캔");   //툴바 제목
 
         registerForContextMenu(rightIcon);
-        registerForContextMenu(rightIcon2);
 
         storeViewModel = new ViewModelProvider(this).get(StoreViewModel.class);
 
@@ -62,7 +58,6 @@ public class GuestActivity extends AppCompatActivity implements
             }
         });
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -84,7 +79,6 @@ public class GuestActivity extends AppCompatActivity implements
         storeViewModel.setStore(storeId);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.container, GuestMenuFragment.newInstance())
-                .addToBackStack("menu")
                 .commit();
     }
 
@@ -111,9 +105,6 @@ public class GuestActivity extends AppCompatActivity implements
         if(v == rightIcon){
             mi.inflate(R.menu.main_menu2, menu);
         }
-        if (v == rightIcon2){
-            mi.inflate(R.menu.menu_call, menu);
-        }
     }//end of ContextMenu()
 
 
@@ -125,12 +116,6 @@ public class GuestActivity extends AppCompatActivity implements
                 startActivity(intent);
                 return true;
             case R.id.btn_logout:
-                return true;
-            case R.id.call:     //알림
-                return true;
-            case R.id.call1:    //알림
-                return true;
-            case R.id.call2:    //알림
                 return true;
         }
         return false;

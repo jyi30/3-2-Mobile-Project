@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,67 +8,70 @@
     tools:context=".Owner_manager">
     <include layout="@layout/toolbar"/>
 
-    <TextView
-        android:id="@+id/et_id"
-        android:layout_width="match_parent"
-        android:layout_height="195dp"
-        android:ems="16"
-        android:fontFamily="@font/nanumsquare_0"
-        android:gravity="center"
-        android:hint="Logo"
-        android:maxLength="20"
-        android:textColorHint="@color/black"
-        android:textSize="40dp" />
 
-    <LinearLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/btn_store_registration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button1"
-            android:ems="15"
-            android:fontFamily="@font/nanumsquare_acl"
+        <LinearLayout
+            android:id="@+id/btn_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:text="가게 등록"
-            android:textColor="@color/black" />
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
 
-        <Button
-            android:id="@+id/btn_menu"
+            <Button
+                android:id="@+id/btn_store_registration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button1"
+                android:ems="15"
+                android:fontFamily="@font/nanumsquare_acl"
+                android:gravity="center"
+                android:text="가게 등록"
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/btn_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button1"
+                android:ems="15"
+                android:fontFamily="@font/nanumsquare_acl"
+                android:gravity="center"
+                android:text="메뉴관리"
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/btn_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button1"
+                android:ems="15"
+                android:fontFamily="@font/nanumsquare_acl"
+                android:text="주문관리"
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/btn_qr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button1"
+                android:ems="15"
+                android:fontFamily="@font/nanumsquare_acl"
+                android:text="QR코드 보기"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/frg_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+             />
+        <ProgressBar
+            android:id="@+id/owner_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button1"
-            android:ems="15"
-            android:fontFamily="@font/nanumsquare_acl"
-            android:gravity="center"
-            android:text="메뉴관리"
-            android:textColor="@color/black" />
-
-        <Button
-            android:id="@+id/btn_order"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button1"
-            android:ems="15"
-            android:fontFamily="@font/nanumsquare_acl"
-            android:text="주문관리"
-            android:textColor="@color/black" />
-
-        <Button
-            android:id="@+id/btn_qr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button1"
-            android:ems="15"
-            android:fontFamily="@font/nanumsquare_acl"
-            android:text="QR코드 보기"
-            android:textColor="@color/black" />
-
-    </LinearLayout>
-
+            android:layout_gravity="center"
+            />
 </LinearLayout>

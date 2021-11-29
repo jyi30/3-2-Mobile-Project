@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private View btn_logIn,logoutButton, btn_next, btn_logout ;
     private TextView nickName;
     private ImageView proflieImage;
+    private Long uid; // user id
 
     // https://www.youtube.com/watch?v=8hKczn0-Hkw
     // 위의 링크를 참고하여 만들었습니다.
@@ -59,19 +60,20 @@ public class MainActivity extends AppCompatActivity {
         btn_next.setOnClickListener(new View.OnClickListener() {           //선택화면으로 이동
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(com.example.team_5.MainActivity.this, Choice.class);
+                Intent intent = new Intent(MainActivity.this, Choice.class);
+                intent.putExtra("uid", uid);
                 startActivity(intent);
             }
         });
 
         // 카카오톡 설치 유무 확인 후 설치인 경우 카카오톡으로, 미설치인 경우 웹으로 로그인화면을 띄움
-       btn_logIn.setOnClickListener(new View.OnClickListener() {
+        btn_logIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(com.example.team_5.MainActivity.this)){
-                    UserApiClient.getInstance().loginWithKakaoTalk(com.example.team_5.MainActivity.this,callback);
+                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)){
+                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this,callback);
                 }else {
-                    UserApiClient.getInstance().loginWithKakaoAccount(com.example.team_5.MainActivity.this, callback);
+                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
                 }
             }
         });

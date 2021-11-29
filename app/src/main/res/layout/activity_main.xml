@@ -26,6 +26,7 @@
             android:maxLength="20"
             android:textColorHint="@color/black"
             android:textSize="40dp" />
+
         <ImageView
             android:id="@+id/profileImage"
             android:layout_width="140dp"
