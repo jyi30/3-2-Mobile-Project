@@ -21,7 +21,7 @@
         <TextView
             android:id="@+id/pay_amount"
             android:layout_width="232dp"
-            android:layout_height="47dp"
+            android:layout_height="70dp"
             android:layout_gravity="center"
             android:textAlignment="center"
             android:textSize="30sp" />
@@ -30,6 +30,9 @@
             android:id="@+id/pay_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:fontFamily="@font/nanumsquare_acl"
             android:text="결제하기" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

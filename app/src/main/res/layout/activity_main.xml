@@ -15,17 +15,6 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/et_id"
-            android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:ems="16"
-            android:fontFamily="@font/nanumsquare_0"
-            android:gravity="center"
-            android:hint="Logo"
-            android:maxLength="20"
-            android:textColorHint="@color/black"
-            android:textSize="40dp" />
 
         <ImageView
             android:id="@+id/profileImage"

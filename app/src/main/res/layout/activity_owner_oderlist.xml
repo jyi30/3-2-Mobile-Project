@@ -8,16 +8,6 @@
     tools:context=".Owner_oderlist">
     <include layout="@layout/toolbar"></include>
 
-    <TextView
-        android:id="@+id/et_id"
-        android:layout_width="match_parent"
-        android:layout_height="195dp"
-        android:ems="16"
-        android:fontFamily="@font/nanumsquare_0"
-        android:gravity="center"
-        android:hint="Logo"
-        android:maxLength="20"
-        android:textColorHint="@color/black"
-        android:textSize="40dp" />
+
 
 </LinearLayout>
