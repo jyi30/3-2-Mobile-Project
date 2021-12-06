@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,40 +25,45 @@ public class Choice extends AppCompatActivity {
         setContentView(R.layout.activity_choice);
 
         uid = getIntent().getLongExtra("uid",0); //user id
+        if(uid != null && uid != 0) {
+            rightIcon = findViewById(R.id.right_icon);
+            registerForContextMenu(rightIcon);
 
-        rightIcon = findViewById(R.id.right_icon);
-        registerForContextMenu(rightIcon);
+            btn_owner = findViewById(R.id.btn_owner);     //점주버튼
+            btn_client = findViewById(R.id.btn_client);    //고객버튼
+            ImageView leftIcon = findViewById(R.id.left_icon);    //뒤로가기 버튼
+            ImageView rightIcon = findViewById(R.id.right_icon);  //메뉴버튼
 
-        btn_owner = findViewById(R.id.btn_owner);     //점주버튼
-        btn_client = findViewById(R.id.btn_client);    //고객버튼
-        ImageView leftIcon = findViewById(R.id.left_icon);    //뒤로가기 버튼
-        ImageView rightIcon = findViewById(R.id.right_icon);  //메뉴버튼
+            btn_owner.setOnClickListener(new View.OnClickListener() {           //점주 화면으로 이동
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Choice.this, Owner_manager.class);
+                    intent.putExtra("uid", uid); //user id 받아오기
+                    startActivity(intent);
+                }
+            });
+            btn_client.setOnClickListener(new View.OnClickListener() {           //고객 화면으로 이동
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Choice.this, GuestActivity.class);
+                    intent.putExtra("uid", uid); //user id 받아오기
+                    startActivity(intent);
+                }
+            });
 
-        btn_owner.setOnClickListener(new View.OnClickListener() {           //점주 화면으로 이동
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Choice.this, Owner_manager.class);
-                intent.putExtra("uid",uid); //user id 받아오기
-                startActivity(intent);
-            }
-        });
-        btn_client.setOnClickListener(new View.OnClickListener() {           //고객 화면으로 이동
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Choice.this, GuestActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        leftIcon.setOnClickListener(new View.OnClickListener()    {                  //뒤로가기 버튼튼
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Choice.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-        TextView title = findViewById(R.id.toolbar_title);
-        title.setText("선택 화면");   //툴바 제목
+            leftIcon.setOnClickListener(new View.OnClickListener() {                  //뒤로가기 버튼튼
+                @Override
+                public void onClick(View v) {
+//                    Intent intent = new Intent(Choice.this, MainActivity.class);
+//                    startActivity(intent);
+                    finish();
+                }
+            });
+            TextView title = findViewById(R.id.toolbar_title);
+            title.setText("선택 화면");   //툴바 제목
+        }else{
+            Toast.makeText(getApplicationContext(),"로그인 오류" + uid,Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

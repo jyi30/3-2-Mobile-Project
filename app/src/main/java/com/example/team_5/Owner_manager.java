@@ -19,10 +19,13 @@ import android.widget.Toast;
 
 import com.example.team_5.databinding.ActivityOwnerManagerBinding;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Owner_manager extends AppCompatActivity
-        implements OwnerRegistrationFragment.ORFragListener {
+        implements OwnerRegistrationFragment.ORFragListener,
+        OwnerMenuFragment.OMFragListener,
+        OwnerMenuAddFragment.OMAFragListener {
 
     private StoreViewModel storeViewModel;
     private Long uid;
@@ -36,109 +39,126 @@ public class Owner_manager extends AppCompatActivity
         activityOwnerManagerBinding = ActivityOwnerManagerBinding.inflate(getLayoutInflater());
         View view = activityOwnerManagerBinding.getRoot();
         setContentView(view);
-
         uid = getIntent().getLongExtra("uid", 0);
+        if (uid != null && uid != 0) {
 
-        storeViewModel = new ViewModelProvider(this).get(StoreViewModel.class);
-        storeViewModel.setStoreUId(uid);
+            storeViewModel = new ViewModelProvider(this).get(StoreViewModel.class);
+            storeViewModel.setStoreUId(uid);
 
-        rightIcon = findViewById(R.id.right_icon);
-        registerForContextMenu(rightIcon);
-        ImageView leftIcon = findViewById(R.id.left_icon);    //상단 뒤로가기 버튼
-        ImageView rightIcon = findViewById(R.id.right_icon);  //상단 메뉴버튼
+            rightIcon = findViewById(R.id.right_icon);
+            registerForContextMenu(rightIcon);
+            ImageView leftIcon = findViewById(R.id.left_icon);    //상단 뒤로가기 버튼
+            ImageView rightIcon = findViewById(R.id.right_icon);  //상단 메뉴버튼
 
-        btn_store_registration= findViewById(R.id.btn_store_registration); //가게등록 버튼
-        btn_menu = findViewById(R.id.btn_menu);                            //메뉴관리 버튼
-        btn_qr = findViewById(R.id.btn_qr);                                //QR코드확인 버튼
-        btn_order = findViewById(R.id.btn_order);                          //주문관리 버튼
-        TextView title = findViewById(R.id.toolbar_title);
-        title.setText("관리자 화면");   //툴바 제목
+            btn_store_registration = findViewById(R.id.btn_store_registration); //가게등록 버튼
+            btn_menu = findViewById(R.id.btn_menu);                            //메뉴관리 버튼
+            btn_qr = findViewById(R.id.btn_qr);                                //QR코드확인 버튼
+            btn_order = findViewById(R.id.btn_order);                          //주문관리 버튼
+            TextView title = findViewById(R.id.toolbar_title);
+            title.setText("관리자 화면");   //툴바 제목
 
-        //가게 등록 화면으로 이동
-        storeViewModel.store.observe(this, new Observer<HashMap<String, Object>>() {
-            @Override
-            public void onChanged(HashMap<String, Object> stringObjectHashMap) {
-                if (stringObjectHashMap != null) {      //store가 있을 경우
-                    activityOwnerManagerBinding.ownerProgress.setVisibility(View.GONE);
-                    activityOwnerManagerBinding.btnContainer.setVisibility(View.VISIBLE);
-                    String sid = (String) stringObjectHashMap.get("id");
-                    String path = "/store/" + sid + "/qr.jpg";
+            //가게 등록 화면으로 이동
+            storeViewModel.store.observe(this, new Observer<HashMap<String, Object>>() {
+                @Override
+                public void onChanged(HashMap<String, Object> stringObjectHashMap) {
+                    if (stringObjectHashMap != null) {      //store가 있을 경우
+                        activityOwnerManagerBinding.ownerProgress.setVisibility(View.GONE);
+                        activityOwnerManagerBinding.btnContainer.setVisibility(View.VISIBLE);
+                        String sid = (String) stringObjectHashMap.get("id");
+                        String path = "/store/" + sid + "/qr.jpg";
 
-                    btn_menu.setOnClickListener(new View.OnClickListener() {           //메뉴관리 화면으로 이동
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Owner_manager.this, Owner_menu.class);
-                            startActivity(intent);
-                        }
-                    });
+                        btn_menu.setOnClickListener(new View.OnClickListener() {           //메뉴관리 화면으로 이동
+                            @Override
+                            public void onClick(View v) {
+                                OwnerMenuFragment ownerMenuFragment = OwnerMenuFragment.newInstance();
+                                ownerMenuFragment.setOMFragListener(Owner_manager.this);
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                activityOwnerManagerBinding.btnContainer.setVisibility(View.GONE);
+                                activityOwnerManagerBinding.frgContainer.setVisibility(View.VISIBLE);
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.frg_container, ownerMenuFragment, "ownerMenuFragment")
+                                        .addToBackStack("ownerMenuFragment")
+                                        .commit();
+                            }
+                        });
 
-                    btn_order.setOnClickListener(new View.OnClickListener() {           //주문목록 화면으로 이동
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Owner_manager.this, Owner_oderlist.class);
-                            startActivity(intent);
-                        }
-                    });
+                        btn_order.setOnClickListener(new View.OnClickListener() {           //주문목록 화면으로 이동
+                            @Override
+                            public void onClick(View v) {
+                                OwnerOrderListFragment ownerOrderListFragment = OwnerOrderListFragment.newInstance();
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                activityOwnerManagerBinding.btnContainer.setVisibility(View.GONE);
+                                activityOwnerManagerBinding.frgContainer.setVisibility(View.VISIBLE);
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.frg_container, ownerOrderListFragment, "ownerOrderListFragment")
+                                        .commit();
+                            }
+                        });
 
-                    btn_qr.setOnClickListener(new View.OnClickListener() {           //QR 코드 확인 화면으로 이동
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Owner_manager.this, Owner_qr.class);
-                            intent.putExtra("path", path);
-                            startActivity(intent);
-                        }
-                    });
-                    btn_store_registration.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(getApplicationContext(), "가게가 이미 등록 되어있습니다.",Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else { //store가 없을 경우
-                    btn_store_registration.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            OwnerRegistrationFragment ownerRegistrationFragment = OwnerRegistrationFragment.newInstance(uid);
-                            ownerRegistrationFragment.setOrFragListener(Owner_manager.this);
-                            FragmentManager fragmentManager = getSupportFragmentManager();
-                            activityOwnerManagerBinding.btnContainer.setVisibility(View.GONE);
-                            activityOwnerManagerBinding.frgContainer.setVisibility(View.VISIBLE);
-                            fragmentManager.beginTransaction()
-                                    .replace(R.id.frg_container, ownerRegistrationFragment, "ownerRegistrationFragment")
-                                    .commit();
-                        }
-                    });
-                    btn_menu.setOnClickListener(new View.OnClickListener() {           //메뉴관리 화면으로 이동
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.",Toast.LENGTH_LONG).show();
-                        }
-                    });
+                        btn_qr.setOnClickListener(new View.OnClickListener() {           //QR 코드 확인 화면으로 이동
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(Owner_manager.this, Owner_qr.class);
+                                intent.putExtra("path", path);
+                                startActivity(intent);
+                            }
+                        });
+                        btn_store_registration.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(getApplicationContext(), "가게가 이미 등록 되어있습니다.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else { //store가 없을 경우
+                        btn_store_registration.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                OwnerRegistrationFragment ownerRegistrationFragment = OwnerRegistrationFragment.newInstance(uid);
+                                ownerRegistrationFragment.setOrFragListener(Owner_manager.this);
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                activityOwnerManagerBinding.btnContainer.setVisibility(View.GONE);
+                                activityOwnerManagerBinding.frgContainer.setVisibility(View.VISIBLE);
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.frg_container, ownerRegistrationFragment, "ownerRegistrationFragment")
+                                        .commit();
+                            }
+                        });
+                        btn_menu.setOnClickListener(new View.OnClickListener() {           //메뉴관리 화면으로 이동
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.", Toast.LENGTH_LONG).show();
+                            }
+                        });
 
-                    btn_order.setOnClickListener(new View.OnClickListener() {           //주문목록 화면으로 이동
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.",Toast.LENGTH_LONG).show();
-                        }
-                    });
+                        btn_order.setOnClickListener(new View.OnClickListener() {           //주문목록 화면으로 이동
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.", Toast.LENGTH_LONG).show();
+                            }
+                        });
 
-                    btn_qr.setOnClickListener(new View.OnClickListener() {           //QR 코드 확인 화면으로 이동
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.",Toast.LENGTH_LONG).show();
-                        }
-                    });
+                        btn_qr.setOnClickListener(new View.OnClickListener() {           //QR 코드 확인 화면으로 이동
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(getApplicationContext(), "가게를 등록해 주세요.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        activityOwnerManagerBinding.ownerProgress.setVisibility(View.GONE);
+                        activityOwnerManagerBinding.btnContainer.setVisibility(View.VISIBLE);
+                    }
                 }
-            }
-        });
+            });
 
-        leftIcon.setOnClickListener(new View.OnClickListener() {                  //선택 화면으로 이동
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Owner_manager.this, Choice.class);
-                startActivity(intent);
-            }
-        });
+            leftIcon.setOnClickListener(new View.OnClickListener() {                  //선택 화면으로 이동
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Owner_manager.this, Choice.class);
+                    startActivity(intent);
+                }
+            });
+        }else{
+            finish();
+        }
     }
 
     @Override
@@ -171,5 +191,24 @@ public class Owner_manager extends AppCompatActivity
         activityOwnerManagerBinding.frgContainer.setVisibility(View.GONE);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("ownerRegistrationFragment"));
+    }
+
+    @Override
+    public void clickSaveMenu(HashMap<String, Object> menu) {
+        ((ArrayList<Object>) storeViewModel.store.getValue().get("menus"))
+                .add(menu);
+    }
+
+    @Override
+    public void clickAddMenu() {
+        OwnerMenuAddFragment ownerMenuAddFragment = OwnerMenuAddFragment.newInstance();
+        ownerMenuAddFragment.setOMAFragListener(this);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        activityOwnerManagerBinding.btnContainer.setVisibility(View.GONE);
+        activityOwnerManagerBinding.frgContainer.setVisibility(View.VISIBLE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.frg_container, ownerMenuAddFragment, "ownerMenuAddFragment")
+                .addToBackStack("ownerMenuAddFragment")
+                .commit();
     }
 }

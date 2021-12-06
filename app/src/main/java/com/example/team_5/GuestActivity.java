@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,9 +22,10 @@ import androidx.lifecycle.ViewModelProvider;
 public class GuestActivity extends AppCompatActivity implements
         GuestScanFragment.GuestFragmentListener {
 
+    public static final int REQUEST_CODE_PAY = 105;
     public final int REQUEST_CODE_PERMISSIONS = 100; //카메라 권한설정
     private StoreViewModel storeViewModel;
-
+    private Long uid;
     private ImageView rightIcon, rightIcon2;
     private Button qrcodeScan;
 
@@ -31,32 +33,36 @@ public class GuestActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest);
+        uid = getIntent().getLongExtra("uid",0);
+        if (uid != null && uid != 0) {
+            rightIcon = findViewById(R.id.right_icon);
+            qrcodeScan = findViewById(R.id.btn_qr_scan);
 
-        rightIcon = findViewById(R.id.right_icon);
-        qrcodeScan = findViewById(R.id.btn_qr_scan);
+            ImageView leftIcon = findViewById(R.id.left_icon);    //뒤로가기 버튼
+            ImageView rightIcon = findViewById(R.id.right_icon);  //메뉴버튼
+            TextView title = findViewById(R.id.toolbar_title);
+            title.setText("QR코드 스캔");   //툴바 제목
 
-        ImageView leftIcon = findViewById(R.id.left_icon);    //뒤로가기 버튼
-        ImageView rightIcon = findViewById(R.id.right_icon);  //메뉴버튼
-        TextView title = findViewById(R.id.toolbar_title);
-        title.setText("QR코드 스캔");   //툴바 제목
+            registerForContextMenu(rightIcon);
 
-        registerForContextMenu(rightIcon);
+            storeViewModel = new ViewModelProvider(this).get(StoreViewModel.class);
 
-        storeViewModel = new ViewModelProvider(this).get(StoreViewModel.class);
-
-        if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
-            startMain();
-        }else {
-            requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSIONS);
-        }
-
-        leftIcon.setOnClickListener(new View.OnClickListener()    {                  //선택 화면으로 이동
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GuestActivity.this, Choice.class);
-                startActivity(intent);
+            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                startMain();
+            } else {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSIONS);
             }
-        });
+
+            leftIcon.setOnClickListener(new View.OnClickListener() {                  //선택 화면으로 이동
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(GuestActivity.this, Choice.class);
+                    startActivity(intent);
+                }
+            });
+        }else{
+            finish();
+        }
     }
 
     @Override
@@ -78,7 +84,7 @@ public class GuestActivity extends AppCompatActivity implements
     public void onBarcode(String storeId) {
         storeViewModel.setStore(storeId);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, GuestMenuFragment.newInstance())
+        fragmentManager.beginTransaction().replace(R.id.container, GuestMenuFragment.newInstance(uid))
                 .commit();
     }
 
@@ -119,5 +125,15 @@ public class GuestActivity extends AppCompatActivity implements
                 return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            if (requestCode == REQUEST_CODE_PAY){
+                Toast.makeText(getApplicationContext(),"결제 완료",Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

@@ -167,7 +167,7 @@ public class OwnerRegistrationFragment extends Fragment {
                 fragmentOwnerRegistrationBinding.addStoreView.setVisibility(View.VISIBLE);
                 fragmentOwnerRegistrationBinding.addStoreLoading.setVisibility(View.GONE);
                 Toast.makeText(getContext(),"QR성공",Toast.LENGTH_SHORT).show();
-                storeViewModel.setStoreId(sid);
+                storeViewModel.setStore(sid);
                 orFragListener.onRegister();
             }
         });

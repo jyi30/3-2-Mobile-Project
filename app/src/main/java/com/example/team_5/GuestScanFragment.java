@@ -132,7 +132,6 @@ public class GuestScanFragment extends Fragment {
                                                 String url = barcode.getUrl().getUrl();
                                                 break;
                                             case Barcode.TYPE_TEXT:
-                                                Toast.makeText(getContext(),barcode.getRawValue(),Toast.LENGTH_LONG).show();
                                                 storeViewModel.setStoreId(barcode.getRawValue());
                                                 break;
                                         }

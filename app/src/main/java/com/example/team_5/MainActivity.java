@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "invoke: nickname=" + user.getKakaoAccount().getProfile().getNickname());
                     Log.i(TAG, "invoke: gender=" + user.getKakaoAccount().getGender());
                     Log.i(TAG, "invoke: age=" + user.getKakaoAccount().getAgeRange());
-
+                    uid = user.getId();
                     //닉네임표시
                     nickName.setText(user.getKakaoAccount().getProfile().getNickname());
                     //프로필사진을 동그랗게 짤라서 보여주기

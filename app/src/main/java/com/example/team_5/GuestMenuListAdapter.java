@@ -23,6 +23,8 @@ public class GuestMenuListAdapter extends RecyclerView.Adapter<GuestMenuListAdap
     private final String TAG = "menuList";
     private ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
     private ArrayList<HashMap<String, Integer>> cartList = new ArrayList<>();
+    private ArrayList<String> nameList = new ArrayList<>();
+    private HashMap<String, Object> oderMap = new HashMap<>();
     private StorageReference storageReference;
     private Button minbtn;
     private Button maxbtn;
@@ -30,10 +32,9 @@ public class GuestMenuListAdapter extends RecyclerView.Adapter<GuestMenuListAdap
     private int menuamount;
     int payamount = 0;
     GuestMenuFragment gmf = new GuestMenuFragment();
-    HashMap<String, Integer> pushmap = new HashMap<String, Integer> ();
+    HashMap<String, Object> pushmap = new HashMap<String, Object> ();
 
-    public GuestMenuListAdapter() {
-    }
+    public GuestMenuListAdapter() { oderMap.put("menu_map",pushmap); }
 
     //리스트뷰 터치 시 반응
     public interface OnItemClickListener{
@@ -62,7 +63,7 @@ public class GuestMenuListAdapter extends RecyclerView.Adapter<GuestMenuListAdap
         int pos = position;
         HashMap<String, Object> hashMap = arrayList.get(position);
         String image = (String) hashMap.get("image"); //DB 메뉴 이미지
-
+        String menuNum = hashMap.get("menu_num").toString();
         //DB 메뉴 이미지 업데이트하는 방법 (하위 노드 포함 모든 데이터를 덮어씀 -전체 객체 다시 사용하지 않아도 됨)
         StorageReference imageRef = storageReference.child("/menus/" + image);
         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -83,20 +84,26 @@ public class GuestMenuListAdapter extends RecyclerView.Adapter<GuestMenuListAdap
             public void onClick(View v) {
                 Log.e("Debug", "메뉴" + arrayList.get(pos));
                 menuname = hashMap.get("name").toString();
+                if(nameList.contains(menuname)){nameList.remove(menuname);}
                 if(Integer.parseInt(holder.getamount().getText().toString()) > 1) {
+                    int price = Integer.parseInt(hashMap.get("price").toString().replaceAll("\\,",""));
                     menuamount = Integer.parseInt(holder.getamount().getText().toString());
                     menuamount--;
-                    payamount -= Integer.parseInt(hashMap.get("price").toString().replaceAll("\\,",""));
+                    payamount -= price;
                     Log.e("Debug","총가격 : "+ payamount);
-                    pushmap.put(menuname, menuamount);
+                    HashMap<String, Object> menuMap = new HashMap<>();
+                    menuMap.put("name", menuname);
+                    menuMap.put("count", menuamount);
+                    menuMap.put("price", menuamount * price);
+                    pushmap.put(menuNum, menuMap);
                 }
                 else {
                     if(Integer.parseInt(holder.getamount().getText().toString()) == 1)
                         payamount -= Integer.parseInt(hashMap.get("price").toString().replaceAll("\\,",""));
-                    pushmap.remove(menuname);
+                    pushmap.remove(menuNum);
                     menuamount = 0;
                 }
-                Log.e("Debug", menuname+"은 "+pushmap.get(menuname));
+                Log.e("Debug", menuname+"은 "+pushmap.get(menuNum));
                 holder.setamount(menuamount);
                 Log.e("Debug","이름 : " + menuname + " 개수 : " + menuamount);
                 Log.e("Debug","OO외  "+ (pushmap.size() > 0 ? (pushmap.size()-1) : 0));
@@ -108,14 +115,18 @@ public class GuestMenuListAdapter extends RecyclerView.Adapter<GuestMenuListAdap
             public void onClick(View v) {
                 Log.e("Debug", "메뉴" + arrayList.get(pos));
                 menuname = hashMap.get("name").toString();
-                if(Integer.parseInt(holder.getamount().getText().toString()) >= 0) {
-                    menuamount = Integer.parseInt(holder.getamount().getText().toString());
-                    payamount += Integer.parseInt(hashMap.get("price").toString().replaceAll("\\,",""));
-                    menuamount++;
-                }
+                int price = Integer.parseInt(hashMap.get("price").toString().replaceAll("\\,",""));
+                nameList.add(menuname);
+                menuamount = Integer.parseInt(holder.getamount().getText().toString());
+                payamount += price;
+                menuamount++;
+                HashMap<String, Object> menuMap = new HashMap<>();
+                menuMap.put("name", menuname);
+                menuMap.put("count", menuamount);
+                menuMap.put("price", menuamount * price);
                 holder.setamount(menuamount);
-                pushmap.put(menuname, menuamount);
-                Log.e("Debug", menuname+"은 "+pushmap.get(menuname));
+                pushmap.put(menuNum, menuMap);
+                Log.e("Debug", menuname+"은 "+pushmap.get(menuNum));
                 Log.e("Debug","총가격 : "+ payamount);
                 Log.e("Debug","OO외  "+pushmap.size());
                 Log.e("Debug","이름 : " + menuname + " 개수 : " + menuamount);
@@ -131,11 +142,14 @@ public class GuestMenuListAdapter extends RecyclerView.Adapter<GuestMenuListAdap
     }
 
     public String getname() {
-        cartList.add(pushmap);
-        return cartList.get(0).toString();
+        return nameList.get(0);
     }
 
     public String getprice() {return String.valueOf(payamount);}
+
+    public HashMap<String, Object> getOderMap() {
+        return oderMap;
+    }
 
     public int getamount() {
         return (pushmap.size() > 0 ? (pushmap.size()-1) : 0);

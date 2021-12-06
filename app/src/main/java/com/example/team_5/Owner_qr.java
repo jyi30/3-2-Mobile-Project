@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.team_5.databinding.ActivityOwnerManagerBinding;
+import com.example.team_5.databinding.ActivityOwnerQrBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -24,13 +26,16 @@ import com.google.firebase.storage.StorageReference;
 public class Owner_qr extends AppCompatActivity {
     private ImageView rightIcon, qrView;
     private FirebaseStorage storage = FirebaseStorage.getInstance("gs://qrmenu-2139c.appspot.com");
+    private ActivityOwnerQrBinding activityOwnerQrBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activityOwnerQrBinding = ActivityOwnerQrBinding.inflate(getLayoutInflater());
+        View view = activityOwnerQrBinding.getRoot();
+        setContentView(view);
 
         StorageReference storageRef = storage.getReference(); //db 이미지
-        setContentView(R.layout.activity_owner_qr);
         rightIcon = findViewById(R.id.right_icon);
         qrView = findViewById(R.id.qr_image);
         registerForContextMenu(rightIcon);
@@ -40,7 +45,8 @@ public class Owner_qr extends AppCompatActivity {
         TextView title = findViewById(R.id.toolbar_title);
         title.setText("QR코드 생성");   //툴바 제목
 
-        String path = getIntent().getStringExtra("path");
+
+        String path = getIntent().getStringExtra("path"); //qr 이미지 경로
 
         storageRef.child(path).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -65,6 +71,7 @@ public class Owner_qr extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
     }
 
     @Override

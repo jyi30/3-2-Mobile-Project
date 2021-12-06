@@ -6,6 +6,7 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
@@ -15,6 +16,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -25,8 +31,10 @@ import java.util.Map;
 public class PayActivity extends AppCompatActivity {
 
     static RequestQueue requestQueue;
-    static String productName;
-    static String productPrice;
+    private String productName;
+    private String productPrice;
+    private HashMap<String, Object> oderMap;
+    private FirebaseFirestore db;
 
     WebView webView;
     Gson gson;
@@ -38,16 +46,23 @@ public class PayActivity extends AppCompatActivity {
 
     }
 
-    public PayActivity(String prdName, String prdPrice) {
-        PayActivity.productName = prdName;
-        PayActivity.productPrice = prdPrice;
-    }
+//    public PayActivity(String prdName, String prdPrice) {
+//        PayActivity.productName = prdName;
+//        PayActivity.productPrice = prdPrice;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay);
 
+//        this.productName = getIntent().getStringExtra("name");
+//        this.productPrice = getIntent().getStringExtra("price");
+        this.oderMap = (HashMap<String, Object>) getIntent().getSerializableExtra("oder_map");
+        this.productName = oderMap.get("show_name").toString();
+        this.productPrice = oderMap.get("price").toString();
+        Log.d("Pay", oderMap.toString());
+        db = FirebaseFirestore.getInstance();
         // 초기화
         requestQueue = Volley.newRequestQueue(getApplicationContext());
         myWebViewClient = new MyWebViewClient();
@@ -126,7 +141,25 @@ public class PayActivity extends AppCompatActivity {
         Response.Listener<String> approvalResponse = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.e("Debug", response);
+                Log.e("Debug", "OnApprovalResponse "+response);
+                oderMap.put("cid", "TC0ONETIME");
+                oderMap.put("tid", tidPin);
+                oderMap.put("pg_token", pgToken);
+                DocumentReference oderRef = db.collection("Order").document();
+                oderMap.put("order_id",oderRef.getId());
+                oderMap.put("order_time", FieldValue.serverTimestamp());
+                oderRef.set(oderMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(@NonNull Void aVoid) {
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
             }
         };
 
@@ -158,24 +191,31 @@ public class PayActivity extends AppCompatActivity {
 
             Log.e("Debug", "url" + url);
             if (url != null && url.contains("pg_token=")) {
+                Log.d("Debug","token_url");
                 String pg_Token = url.substring(url.indexOf("pg_token=") + 9);
                 pgToken = pg_Token;
 
                 requestQueue.add(approvalRequest);
-
+                view.loadUrl(url);
             } else if (url != null && url.startsWith("intent://")) {
+                Log.d("Debug", "intent url");
                 try {
                     Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
                     Intent existPackage = getPackageManager().getLaunchIntentForPackage(intent.getPackage());
                     if (existPackage != null) {
+
                         startActivity(intent);
                     }
                     return true;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                view.loadUrl(url);
+            } else if(url.contains("success")){
+                Log.d("Debug", "pay success url");
+
             }
-            view.loadUrl(url);
+
             return false;
         }
     }

@@ -31,6 +31,8 @@ public class GuestMenuFragment extends Fragment {
     private GuestMenuListAdapter guestMenuListAdapter;
     private FirebaseStorage storage = FirebaseStorage.getInstance("gs://qrmenu-2139c.appspot.com");
     private StorageReference storageRef;
+    private String sid;
+    private long uid;
 
     GuestActivity activity;
     @Override
@@ -52,9 +54,10 @@ public class GuestMenuFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static GuestMenuFragment newInstance() {
+    public static GuestMenuFragment newInstance(Long uid) {
         GuestMenuFragment fragment = new GuestMenuFragment();
         Bundle args = new Bundle();
+        args.putLong("uid",uid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,6 +66,7 @@ public class GuestMenuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            uid = getArguments().getLong("uid");
         }
         storeViewModel = new ViewModelProvider(requireActivity()).get(StoreViewModel.class);
         guestMenuListAdapter = new GuestMenuListAdapter();
@@ -89,10 +93,22 @@ public class GuestMenuFragment extends Fragment {
                 String[] split = guestMenuListAdapter.getname().replaceAll("\\{","").replaceAll("\\}","").split("=");
                 String name = "" + split[0] + " 외 " + guestMenuListAdapter.getamount() + "개";
                 String price = guestMenuListAdapter.getprice();
+                HashMap<String, Object> oderMap = guestMenuListAdapter.getOderMap();
+
+                oderMap.put("show_name", name);
+                oderMap.put("price",price);
+                oderMap.put("store_id",sid);
+                oderMap.put("user_id",uid);
+                oderMap.put("order_refuse", false);
+                oderMap.put("refuse_text","");
+                oderMap.put("get_order",false);
+
                 Log.e("Debug","ddd"+name);
-                PayActivity payActivity = new PayActivity(name, price);
                 Intent intent = new Intent(getActivity(), PayActivity.class);
-                startActivity(intent);
+                intent.putExtra("oder_map", oderMap);
+//                intent.putExtra("name", name);
+//                intent.putExtra("price", price);
+                startActivityForResult(intent, GuestActivity.REQUEST_CODE_PAY);
             }
         });
         return fragmentMenuBinding.getRoot();
@@ -109,11 +125,17 @@ public class GuestMenuFragment extends Fragment {
             public void onChanged(HashMap<String, Object> stringObjectHashMap) {
                 ArrayList<HashMap<String,Object>> menus =(ArrayList<HashMap<String,Object>>) stringObjectHashMap.get("menus");
                 guestMenuListAdapter.setMenu(menus);
-                String id = (String) stringObjectHashMap.get("id");
-                String path = "store/" + id;
+                sid = (String) stringObjectHashMap.get("id");
+                String path = "store/" + sid;
                 StorageReference storeRef = storageRef.child(path);
                 guestMenuListAdapter.setStorageReference(storeRef);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 }
