@@ -49,7 +49,7 @@
                     android:hint="메뉴설명"></EditText>
 
                 <EditText
-                    android:id="@+id/menu_price"
+                    android:id="@+id/add_menu_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

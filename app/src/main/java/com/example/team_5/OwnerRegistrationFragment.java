@@ -38,10 +38,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class OwnerRegistrationFragment extends Fragment {
-    private Long uid;
-    private FragmentOwnerRegistrationBinding fragmentOwnerRegistrationBinding;
-    private FirebaseFirestore db;
-    private FirebaseStorage storage = FirebaseStorage.getInstance("gs://qrmenu-2139c.appspot.com/");
+    private FragmentOwnerRegistrationBinding fragmentOwnerRegistrationBinding; //xml id 사용을 위해
+    private Long uid; //user id
+    private FirebaseFirestore db; //db
+    private FirebaseStorage storage = FirebaseStorage.getInstance("gs://qrmenu-2139c.appspot.com/"); //storage(db 이미지)
     private StorageReference storageRef;
     private StoreViewModel storeViewModel;
     private ORFragListener orFragListener;
@@ -61,7 +61,7 @@ public class OwnerRegistrationFragment extends Fragment {
     public static OwnerRegistrationFragment newInstance(Long uid) {
         OwnerRegistrationFragment fragment = new OwnerRegistrationFragment();
         Bundle args = new Bundle();
-        args.putLong("uid",uid);
+        args.putLong("uid",uid); //uid
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,10 +72,9 @@ public class OwnerRegistrationFragment extends Fragment {
         if (getArguments() != null) {
             uid = getArguments().getLong("uid");
         }
-        db = FirebaseFirestore.getInstance();
-        storageRef = storage.getReference();
-        storeViewModel = new ViewModelProvider(requireActivity())
-                .get(StoreViewModel.class);
+        db = FirebaseFirestore.getInstance(); //firebase
+        storageRef = storage.getReference(); //storage
+        storeViewModel = new ViewModelProvider(requireActivity()).get(StoreViewModel.class);
     }
 
     @Override
@@ -92,14 +91,16 @@ public class OwnerRegistrationFragment extends Fragment {
         fragmentOwnerRegistrationBinding.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragmentOwnerRegistrationBinding.saveButton.setEnabled(false);
-                fragmentOwnerRegistrationBinding.addStoreView.setVisibility(View.GONE);
-                fragmentOwnerRegistrationBinding.addStoreLoading.setVisibility(View.VISIBLE);
-                HashMap<String, Object> store = new HashMap<>();
-                String sName = fragmentOwnerRegistrationBinding.addStoreSname.getEditableText().toString();
-                store.put("name", sName);
-                store.put("user_id", uid);
-                store.put("menus", new ArrayList<>());
+                fragmentOwnerRegistrationBinding.saveButton.setEnabled(false); //저장버튼
+                fragmentOwnerRegistrationBinding.addStoreView.setVisibility(View.GONE); //storeView 사라지게
+                fragmentOwnerRegistrationBinding.addStoreLoading.setVisibility(View.VISIBLE); // 로딩 이미지 보이게
+
+                HashMap<String, Object> store = new HashMap<>(); //store HashMap
+                String sName = fragmentOwnerRegistrationBinding.addStoreSname.getEditableText().toString(); //가게 이름 저장
+                store.put("name", sName); //db에 가게이름 put
+                store.put("user_id", uid); // db에 user id put
+                store.put("menus", new ArrayList<>()); // db에 menu put
+
                 db.runTransaction(new Transaction.Function<String>() {
                     @Override
                     public String apply(Transaction transaction) throws FirebaseFirestoreException {
@@ -117,14 +118,13 @@ public class OwnerRegistrationFragment extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
                     }
                 });
-
             }
         });
     }
 
+    //QR코드 생성
     private void makeQR(String id){
         RequestQueue queue = Volley.newRequestQueue(getContext());
         String url ="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl="+id;
@@ -162,16 +162,12 @@ public class OwnerRegistrationFragment extends Fragment {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
-                fragmentOwnerRegistrationBinding.addStoreView.setVisibility(View.VISIBLE);
-                fragmentOwnerRegistrationBinding.addStoreLoading.setVisibility(View.GONE);
-                Toast.makeText(getContext(),"QR성공",Toast.LENGTH_SHORT).show();
+                fragmentOwnerRegistrationBinding.addStoreView.setVisibility(View.VISIBLE); //StoreView 보이게
+                fragmentOwnerRegistrationBinding.addStoreLoading.setVisibility(View.GONE); //로딩 이미지 사라지게
+                //Toast.makeText(getContext(),"QR성공",Toast.LENGTH_SHORT).show();
                 storeViewModel.setStore(sid);
                 orFragListener.onRegister();
             }
         });
-
     }
-
 }

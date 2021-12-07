@@ -20,13 +20,40 @@ import com.example.team_5.databinding.ActivityOwnerManagerBinding;
 import com.example.team_5.databinding.ActivityOwnerQrBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class Owner_qr extends AppCompatActivity {
     private ImageView rightIcon, qrView;
-    private FirebaseStorage storage = FirebaseStorage.getInstance("gs://qrmenu-2139c.appspot.com");
+    private TextView storeId;
+
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+
     private ActivityOwnerQrBinding activityOwnerQrBinding;
+
+    private String name;
+
+    public Owner_qr(){}
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Owner_qr(String name) {this.name = name;}
+
+    private FirebaseStorage storage = FirebaseStorage.getInstance("gs://qrmenu-2139c.appspot.com");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +65,7 @@ public class Owner_qr extends AppCompatActivity {
         StorageReference storageRef = storage.getReference(); //db 이미지
         rightIcon = findViewById(R.id.right_icon);
         qrView = findViewById(R.id.qr_image);
+        storeId = findViewById(R.id.store_id);
         registerForContextMenu(rightIcon);
 
         ImageView leftIcon = findViewById(R.id.left_icon);    //뒤로가기 버튼
@@ -45,9 +73,23 @@ public class Owner_qr extends AppCompatActivity {
         TextView title = findViewById(R.id.toolbar_title);
         title.setText("QR코드 생성");   //툴바 제목
 
-
         String path = getIntent().getStringExtra("path"); //qr 이미지 경로
 
+
+/*        databaseReference.child("Store").child(name).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Owner_qr store = dataSnapshot.getValue(Owner_qr.class);
+                name = store.getName();
+                storeId.setText(name);
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+            }
+        });
+*/
         storageRef.child(path).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(@NonNull Uri uri) {
@@ -55,6 +97,7 @@ public class Owner_qr extends AppCompatActivity {
                         .load(uri)
                         .centerCrop()
                         .into(qrView);
+
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
@@ -64,7 +107,7 @@ public class Owner_qr extends AppCompatActivity {
                     }
                 });
 
-        leftIcon.setOnClickListener(new View.OnClickListener()    {                  //뒤로가기 버튼튼
+        leftIcon.setOnClickListener(new View.OnClickListener()    {                  //뒤로가기 버튼
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Owner_qr.this, Owner_manager.class);
@@ -73,6 +116,7 @@ public class Owner_qr extends AppCompatActivity {
         });
 
     }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,              //상단 메뉴

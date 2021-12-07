@@ -22,6 +22,7 @@ import com.example.team_5.databinding.FragmentOwnerMenuAddBinding;
 import com.example.team_5.databinding.FragmentOwnerRegistrationBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -54,7 +55,6 @@ public class OwnerMenuAddFragment extends Fragment {
         this.omaFragListener = listener;
     }
     public OwnerMenuAddFragment() {
-        // Required empty public constructor
     }
 
 
@@ -104,30 +104,28 @@ public class OwnerMenuAddFragment extends Fragment {
                 fragmentOwnerMenuAddBinding.btnSave.setOnClickListener(new View.OnClickListener() {
                     private static final String TAG = ".jpg";
                     String name = fragmentOwnerMenuAddBinding.addMenuName.getText().toString();
+                    String detail = fragmentOwnerMenuAddBinding.addMenuDetail.getText().toString();
+                    String price = fragmentOwnerMenuAddBinding.addMenuPrice.getText().toString();
+
                     @Override
                     public void onClick(View v) {
                     if (imgUri != null && name != ""){
                             HashMap<String,Object> menu = new HashMap<>();
                             int last = ((ArrayList<Object>) store.get("menus")).size();
-                            String path = store.get("id").toString() + "/menus/"+name+".jpg";
+
+                            String path = "store/" + store.get("id").toString() + "/menus/"+name+".jpg";
                             menu.put("name", name);
-
-                            save(path, store.get("id").toString(), menu);
+                            menu.put("detail", detail);
+                            menu.put("price", price);
+                            menu.put("image", name+".jpg");
+                            menu.put("menu_num", 0);
+                        save(path, store.get("id").toString(), menu);
                         }
-//                StorageReference storageRef = storage.getReference();
-//                Uri file = Uri.fromFile(new File((String) Uripath)); // 절대경로uri를 file에 할당
-//                Log.d(TAG, "photo file : " + file);
-//
-//                // stroage images에 절대경로파일 저장
-//                StorageReference riversRef = storageRef.child("images/" + file.getLastPathSegment());
-//                UploadTask uploadTask = riversRef.putFile(file);
-//                Log.d(TAG, "uploadTask : " + uploadTask);
-                    }
-                });///====== 이미지 추가부분임 아직 텍스트 넣지 않음
 
+                    }
+                });
             }
         });
-
 
         //뒤로가기 버튼
         fragmentOwnerMenuAddBinding.back.setOnClickListener(new View.OnClickListener() {
@@ -149,8 +147,8 @@ public class OwnerMenuAddFragment extends Fragment {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
+
+
                 db.collection("Store").document(sid).update("menus",  FieldValue.arrayUnion(menu))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -177,6 +175,4 @@ public class OwnerMenuAddFragment extends Fragment {
                     .into(fragmentOwnerMenuAddBinding.addMenuImage);
         }
     }
-
-
 }

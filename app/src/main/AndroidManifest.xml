@@ -23,7 +23,6 @@
         <activity android:name=".OwnerMenuAdd" />
         <activity android:name=".GuestActivity" />
         <activity android:name=".Owner_qr" />
-        <activity android:name=".Owner_oderlist" />
         <activity android:name=".Owner_menu" />
         <activity android:name=".Owner_manager" />
         <activity android:name=".Choice" />
