@@ -90,25 +90,27 @@ public class GuestMenuFragment extends Fragment {
         fragmentMenuBinding.payBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] split = guestMenuListAdapter.getname().replaceAll("\\{","").replaceAll("\\}","").split("=");
-                String name = "" + split[0] + " 외 " + guestMenuListAdapter.getamount() + "개";
-                String price = guestMenuListAdapter.getprice();
-                HashMap<String, Object> oderMap = guestMenuListAdapter.getOderMap();
+                if (guestMenuListAdapter.getPayamount() > 0) {
+                    String[] split = guestMenuListAdapter.getname().replaceAll("\\{", "").replaceAll("\\}", "").split("=");
+                    String name = "" + split[0] + " 외 " + guestMenuListAdapter.getamount() + "개";
+                    String price = guestMenuListAdapter.getprice();
+                    HashMap<String, Object> oderMap = guestMenuListAdapter.getOderMap();
 
-                oderMap.put("show_name", name);
-                oderMap.put("price",price);
-                oderMap.put("store_id",sid);
-                oderMap.put("user_id",uid);
-                oderMap.put("order_refuse", false);
-                oderMap.put("refuse_text","");
-                oderMap.put("get_order",false);
+                    oderMap.put("show_name", name);
+                    oderMap.put("price", price);
+                    oderMap.put("store_id", sid);
+                    oderMap.put("user_id", uid);
+                    oderMap.put("order_refuse", false);
+                    oderMap.put("refuse_text", "");
+                    oderMap.put("get_order", false);
 
-                Log.e("Debug","ddd"+name);
-                Intent intent = new Intent(getActivity(), PayActivity.class);
-                intent.putExtra("oder_map", oderMap);
+                    Log.e("Debug", "ddd" + name);
+                    Intent intent = new Intent(getActivity(), PayActivity.class);
+                    intent.putExtra("oder_map", oderMap);
 //                intent.putExtra("name", name);
 //                intent.putExtra("price", price);
-                startActivityForResult(intent, GuestActivity.REQUEST_CODE_PAY);
+                    startActivityForResult(intent, GuestActivity.REQUEST_CODE_PAY);
+                }
             }
         });
         return fragmentMenuBinding.getRoot();

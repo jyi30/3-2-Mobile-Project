@@ -1,8 +1,11 @@
 package com.example.team_5;
 
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,8 +37,35 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
         holder.orderUid.setText("주문고객: "+order.get("user_id").toString());
         holder.orderPrice.setText("총가격: "+order.get("price").toString());
         OrderMenuAdapter orderMenuAdapter = new OrderMenuAdapter((HashMap<String,Object>) order.get("menu_map"));
+        holder.ordState.setText("주문상태 : 대기");
+
+        holder.menuReject.setText("주문거부");
+        holder.menuReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.ordState.setText("주문상태 : 거부");
+                Intent intent = new Intent(v.getContext(), Cancel.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("tid", order.get("tid").toString());
+                intent.putExtra("price", order.get("price").toString());
+                v.getContext().startActivity(intent);
+            }
+        });
+        holder.menuAccept.setText("주문접수");
+        holder.menuAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.ordState.getText().equals("주문상태 : 대기")) {
+                    holder.ordState.setText("주문상태 : 접수");
+                    holder.menuAccept.setText("주문완료");
+                    holder.menuReject.setVisibility(View.GONE);
+                }
+                else
+                    holder.ordState.setText("주문상태 : 완료");
+            }
+        });
         holder.menuListView.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
         holder.menuListView.setAdapter(orderMenuAdapter);
+
     }
 
     @Override
@@ -53,6 +83,9 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
         private TextView orderTime;
         private TextView orderPrice;
         private RecyclerView menuListView;
+        private Button menuReject;
+        private Button menuAccept;
+        private TextView ordState;
 
         public OrderListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,6 +94,9 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
             orderTime = itemView.findViewById(R.id.order_time);
             orderPrice = itemView.findViewById(R.id.order_price);
             menuListView = itemView.findViewById(R.id.order_menu_list);
+            menuReject = itemView.findViewById(R.id.rejectBtn);
+            menuAccept = itemView.findViewById(R.id.acceptBtn);
+            ordState = itemView.findViewById(R.id.ordState);
         }
     }
 
